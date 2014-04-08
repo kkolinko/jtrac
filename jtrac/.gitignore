@@ -1,1 +1,10 @@
+# maven related
 target
+
+# eclipse related
+.classpath
+.project
+.settings
+
+# ant related
+home
