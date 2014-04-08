@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jtrac" basedir=".">
-    
-    <!-- example build.properties    
+
+    <!-- example build.properties
     tomcat.home=C:/apache-tomcat-5.5.16 [optional, jetty used by default]
     jmeter.home=C:/jakarta-jmeter-2.2 [optional, for load testing]
     findbugs.home=C:/peter/opt/findbugs-1.3.1 [optional, for running findbugs]
     maven.repo.local=D:/repo
     -->
-    
-    <property file="build.properties"/>    
-    <property name="war.name" value="jtrac"/>    
-    
+
+    <property file="build.properties"/>
+    <property name="war.name" value="jtrac"/>
+
     <!-- ========================= MAVEN ============================ -->
-    
-    <target name="mvn-init" unless="mvn.inited" xmlns:artifact="urn:maven-artifact-ant">  
+
+    <target name="mvn-init" unless="mvn.inited" xmlns:artifact="urn:maven-artifact-ant">
         <property name="mvn.inited" value="true"/>
-        <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" 
+        <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
             classpath="etc/maven-ant-tasks.jar"/>
         <condition property="maven.repo.local" value="${maven.repo.local}" else="${user.home}/.m2/repository">
             <isset property="maven.repo.local"/>
         </condition>
         <echo>using maven local repo: ${maven.repo.local}</echo>
-        <artifact:localRepository id="local.repository" path="${maven.repo.local}"/> 
+        <artifact:localRepository id="local.repository" path="${maven.repo.local}"/>
         <artifact:pom file="pom.xml" id="maven.project"/>
         <artifact:dependencies pathId="compile.classpath" filesetId="compile.fileset" useScope="compile">
             <pom refid="maven.project"/>
@@ -36,28 +36,28 @@
             <localRepository refid="local.repository"/>
         </artifact:dependencies>
     </target>
-    
-    <!-- ============================= BUILD =============================== -->    
-    
+
+    <!-- ============================= BUILD =============================== -->
+
     <target name="clean">
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="target"/>
-        </delete>      
+        </delete>
     </target>
-    
+
     <target name="clean-db">
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="home">
                 <exclude name="jtrac.properties"/>
             </fileset>
-        </delete>        
-    </target>    
-    
+        </delete>
+    </target>
+
     <target name="compile" depends="mvn-init">
         <mkdir dir="target/classes"/>
         <property name="debug" value="true"/>
-        <!-- 
-        <condition property="debug" value="false" else="true">            
+        <!--
+        <condition property="debug" value="false" else="true">
             <isset property="production.mode"/>
         </condition>
         -->
@@ -67,20 +67,20 @@
         </javac>
         <copy todir="target/classes">
             <fileset dir="src/main/java" includes="**/*.html"/>
-        </copy>         
+        </copy>
         <copy todir="target/classes">
             <fileset dir="src/main/resources"/>
-        </copy>              
-    </target>           
-    
+        </copy>
+    </target>
+
     <target name="war-exploded" depends="compile">
-        <war-exploded/>        
-    </target> 
-    
+        <war-exploded/>
+    </target>
+
     <target name="war-exploded-tomcat" depends="compile">
         <war-exploded deployDir="${tomcat.home}/webapps/${war.name}"/>
-    </target>    
-    
+    </target>
+
     <macrodef name="war-exploded">
         <attribute name="deployDir" default="target/${war.name}"/>
         <sequential>
@@ -95,45 +95,45 @@
            </copy>
         </sequential>
     </macrodef>
-    
+
     <!-- ========================= HIBERNATE =========================== -->
 
     <target name="hbm-export" depends="compile">
         <input message="Hibernate Dialect:" addproperty="dialect"/>
         <java classname="org.hibernate.tool.hbm2ddl.SchemaExport" fork="true">
-            <classpath>                
-                <path path="target/classes"/>  
+            <classpath>
+                <path path="target/classes"/>
                 <path refid="test.classpath"/>
-            </classpath>            
+            </classpath>
             <jvmarg value="-Dhibernate.dialect=${dialect}"/>
             <arg value="--text"/>
             <arg value="--delimiter=;"/>
             <arg value="--output=target/schema.sql"/>
             <arg value="src/main/resources/*.hbm.xml"/>
         </java>
-    </target>       
-    
+    </target>
+
     <!-- cannot be used when jtrac application is connected -->
     <target name="hsqldb-manager">
-        <java classname="org.hsqldb.util.DatabaseManagerSwing" fork="true" classpathref="test.classpath">            
+        <java classname="org.hsqldb.util.DatabaseManagerSwing" fork="true" classpathref="test.classpath">
             <arg line="-url jdbc:hsqldb:file:home/db/jtrac"/>
-        </java>                            
-    </target>    
-    
+        </java>
+    </target>
+
     <!-- ========================== DIST ============================ -->
-    
-    <target name="dist-init">                
+
+    <target name="dist-init">
         <input message="Release Version:" addproperty="version"/>
         <tstamp/>
         <concat destfile="src/main/resources/jtrac-version.properties">version=${version}${line.separator}timestamp=${DSTAMP}${TSTAMP}
         </concat>
         <property name="production.mode" value="true"/>
-    </target>           
-    
-    <target name="war" depends="war-exploded">        
+    </target>
+
+    <target name="war" depends="war-exploded">
         <zip destfile="target/${war.name}.war" basedir="target/${war.name}"/>
     </target>
-        
+
     <target name="dist-jtrac" depends="dist-init, war, jetty-setup">
         <copy todir="target/jetty/logs" file="etc/dummy.txt"/>
         <copy todir="target/jetty/work" file="etc/dummy.txt"/>
@@ -145,30 +145,30 @@
             <zipfileset dir="etc" includes="jtrac-hsqldb-to-mysql.bsh" prefix="jtrac/etc"/>
             <zipfileset dir="target/site/doc" prefix="jtrac/doc"/>
             <zipfileset dir="." includes="*.txt" prefix="jtrac"/>
-        </zip>         
+        </zip>
     </target>
-    
+
     <target name="dist-war-scp" depends="clean, dist-init, war">
         <input message="Please enter password:" addproperty="password"/>
-        <scp file="target/jtrac.war" 
+        <scp file="target/jtrac.war"
             todir="ptrthomas@web.sourceforge.net:/home/groups/j/j-/j-trac/htdocs/files"
             password="${password}" trust="true"/>
     </target>
-    
+
     <target name="dist-doc">
         <ant antfile="doc/build.xml"/>
     </target>
-        
+
     <target name="dist" depends="clean, dist-doc, dist-jtrac, dist-jtrac-src"/>
-    
+
     <target name="dist-site-clean">
         <delete includeemptydirs="true">
             <fileset dir="target/site">
                 <exclude name="doc/**"/>
             </fileset>
         </delete>
-    </target>       
-    
+    </target>
+
     <target name="dist-jtrac-src">
         <mkdir dir="target"/>
         <zip destfile="target/jtrac-src.zip">
@@ -176,13 +176,13 @@
             <zipfileset dir="etc" prefix="jtrac/etc"/>
             <zipfileset dir="src" prefix="jtrac/src"/>
             <zipfileset dir="." includes="*.*" prefix="jtrac"/>
-        </zip>         
-    </target>    
-    
+        </zip>
+    </target>
+
     <!-- ========================== TEST ============================ -->
-    
+
     <target name="all" depends="clean, compile-test, checkstyle, test-coverage"/>
-    
+
     <target name="compile-test" depends="compile">
         <mkdir dir="target/test-classes"/>
         <javac srcdir="src/test/java" destdir="target/test-classes" debug="true" target="1.5">
@@ -191,43 +191,43 @@
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
-    </target>           
-    
-    <target name="test-coverage" depends="emma-init, compile-test">    
+    </target>
+
+    <target name="test-coverage" depends="emma-init, compile-test">
         <test-macro emmaEnabled="true"/>
         <junitreport todir="target/reports">
             <fileset dir="target/reports">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="target/reports"/>
-        </junitreport>        
+        </junitreport>
     </target>
-    
+
     <target name="test" depends="compile-test">
-        <test-macro/>     
+        <test-macro/>
     </target>
-    
+
     <target name="test-single" depends="compile-test" if="netbeans.home">
         <!-- files property expected from netbeans -->
-        <fail unless="files">no files selected!</fail>      
-        <test-macro includes="${files}" emmaEnabled="false" excludes="" haltonfailure="true"/>      
-    </target> 
-    
+        <fail unless="files">no files selected!</fail>
+        <test-macro includes="${files}" emmaEnabled="false" excludes="" haltonfailure="true"/>
+    </target>
+
     <!-- TODO cleanup -->
     <target name="test-debug-single" depends="compile-test" if="netbeans.home">
         <!-- files property expected from netbeans -->
         <fail unless="files">no files selected!</fail>
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="target/home"/>
-        </delete>        
-        <path id="test-classpath">            
+        </delete>
+        <path id="test-classpath">
             <path path="target/classes"/>
             <path path="target/test-classes"/>
-            <path refid="test.classpath"/>                   
-        </path>            
+            <path refid="test.classpath"/>
+        </path>
         <nbjpdastart name="${files}" addressproperty="jpda.address" transport="dt_socket">
             <classpath refid="test-classpath"/>
-        </nbjpdastart>        
+        </nbjpdastart>
         <junit fork="true" dir="." tempdir="target">
             <classpath refid="test-classpath"/>
             <jvmarg value="-Xdebug"/>
@@ -238,34 +238,34 @@
             <batchtest todir="target/reports">
                 <fileset dir="src/test/java" includes="${files}"/>
             </batchtest>
-        </junit>                     
-    </target>      
-    
+        </junit>
+    </target>
+
     <target name="test-single-method" depends="compile-test">
-        <input message="enter method name:" addproperty="method.name"/>    
-        <path id="test-classpath">            
+        <input message="enter method name:" addproperty="method.name"/>
+        <path id="test-classpath">
             <path path="target/classes"/>
             <path path="target/test-classes"/>
-            <path refid="test.classpath"/>                    
-        </path>         
+            <path refid="test.classpath"/>
+        </path>
         <junit fork="true" dir="." tempdir="target">
             <classpath refid="test-classpath"/>
             <jvmarg value="-Dmethod.name=${method.name}"/>
             <formatter type="brief" usefile="false"/>
             <batchtest todir="target/reports">
                 <fileset dir="src/test/java" includes="info/jtrac/test/SingleMethodRunnerTestCase.java"/>
-            </batchtest>            
+            </batchtest>
         </junit>
     </target>
-    
+
     <target name="emma-init" depends="mvn-init" xmlns:artifact="urn:maven-artifact-ant">
         <artifact:dependencies pathId="emma.classpath">
             <dependency groupId="emma" artifactId="emma" version="2.0.5312"/>
-            <dependency groupId="emma" artifactId="emma_ant" version="2.0.5312"/>        
+            <dependency groupId="emma" artifactId="emma_ant" version="2.0.5312"/>
         </artifact:dependencies>
         <taskdef resource="emma_ant.properties" classpathref="emma.classpath"/>
-    </target>        
-    
+    </target>
+
     <macrodef name="test-macro">
         <attribute name="includes" default="**/*Test.java"/>
         <attribute name="emmaEnabled" default="false"/>
@@ -274,27 +274,27 @@
         <sequential>
             <mkdir dir="logs"/>
             <mkdir dir="target/reports"/>
-            <emma enabled="@{emmaEnabled}">                    
-                <instr instrpath="target/classes" 
-                outdir="target/instr-classes" 
+            <emma enabled="@{emmaEnabled}">
+                <instr instrpath="target/classes"
+                outdir="target/instr-classes"
                 metadatafile="target/metadata.emma" merge="true"/>
             </emma>
             <delete includeemptydirs="true" failonerror="false">
                 <fileset dir="target/home"/>
-            </delete>            
+            </delete>
             <copy file="etc/test.log4j.properties" tofile="target/test-classes/log4j.properties"/>
             <junit fork="true" dir="." tempdir="target" haltonfailure="@{haltonfailure}">
                 <classpath>
                     <path path="target/instr-classes"/>
                     <path path="target/classes"/>
                     <path path="target/test-classes"/>
-                    <path refid="test.classpath"/>               
-                    <path refid="emma.classpath"/>  
+                    <path refid="test.classpath"/>
+                    <path refid="emma.classpath"/>
                 </classpath>
                 <jvmarg value="-Demma.coverage.out.file=${basedir}/target/coverage.emma"/>
                 <jvmarg value="-Demma.coverage.out.merge=true"/>
                 <formatter type="brief" usefile="false"/>
-                <formatter type="xml"/>            
+                <formatter type="xml"/>
                 <batchtest todir="target/reports">
                     <fileset dir="src/test/java" includes="@{includes}" excludes="@{excludes}"/>
                 </batchtest>
@@ -303,36 +303,36 @@
                 <report sourcepath="src/main/java">
                     <fileset dir="target">
                         <include name="*.emma"/>
-                    </fileset>                
+                    </fileset>
                     <html outfile="${basedir}/target/reports/index-coverage.html"/>
                 </report>
-            </emma>          
+            </emma>
         </sequential>
-    </macrodef>    
-    
-    <!-- ======================= CHECKSTYLE ========================= -->   
-    
+    </macrodef>
+
+    <!-- ======================= CHECKSTYLE ========================= -->
+
     <target name="checkstyle-init" depends="mvn-init" xmlns:artifact="urn:maven-artifact-ant">
         <artifact:dependencies pathId="checkstyle.classpath">
-            <dependency groupId="checkstyle" artifactId="checkstyle" version="4.3"/>                 
+            <dependency groupId="checkstyle" artifactId="checkstyle" version="4.3"/>
         </artifact:dependencies>
-        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/> 
-    </target>                                  
-    
+        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath"/>
+    </target>
+
     <target name="checkstyle" depends="checkstyle-init">
         <checkstyle-macro/>
-        <style 
-            in="target/reports/checkstyle.xml" 
-            out="target/reports/checkstyle.html" 
-            style="etc/checkstyle-noframes-sorted.xsl"/> 
+        <style
+            in="target/reports/checkstyle.xml"
+            out="target/reports/checkstyle.html"
+            style="etc/checkstyle-noframes-sorted.xsl"/>
     </target>
-    
+
     <target name="checkstyle-dump" depends="checkstyle">
         <concat>
             <fileset dir="target/reports" includes="checkstyle.txt"/>
         </concat>
     </target>
-    
+
     <target name="checkstyle-single" depends="compile, checkstyle-init">
         <!-- files property expected from netbeans -->
         <fail unless="files">no files selected</fail>
@@ -340,8 +340,8 @@
         <concat>
             <fileset dir="target/reports" includes="checkstyle.txt"/>
         </concat>
-    </target>    
-    
+    </target>
+
     <macrodef name="checkstyle-macro">
         <attribute name="files" default="**/*.java,**/*.properties"/>
         <sequential>
@@ -357,39 +357,39 @@
                 </classpath>
                 <formatter type="xml" toFile="target/reports/checkstyle.xml"/>
                 <formatter type="plain" toFile="target/reports/checkstyle.txt"/>
-            </checkstyle>            
+            </checkstyle>
         </sequential>
-    </macrodef> 
-    
-    <!-- ========================= FINDBUGS ========================= -->        
-    
-    <target name="findbugs" depends="compile">      
-        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">            
+    </macrodef>
+
+    <!-- ========================= FINDBUGS ========================= -->
+
+    <target name="findbugs" depends="compile">
+        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">
             <arg line="etc/findbugs-project-gen.bsh"/>
         </java>
         <path id="findbugs.classpath">
-            <fileset dir="${findbugs.home}/lib"/>                
+            <fileset dir="${findbugs.home}/lib"/>
         </path>
         <mkdir dir="target/reports"/>
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.classpath"/>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
-            projectFile="target/jtrac.fbp" output="xml:withMessages" outputFile="target/reports/findbugs.xml"/>                           
-    </target>    
-    
+            projectFile="target/jtrac.fbp" output="xml:withMessages" outputFile="target/reports/findbugs.xml"/>
+    </target>
+
     <target name="findbugs-console-dump">
-        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">            
+        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">
             <arg line="etc/findbugs-console-dump.bsh"/>
         </java>
-    </target>        
-    
-    <!-- =========================== PMD ============================ -->  
-    
+    </target>
+
+    <!-- =========================== PMD ============================ -->
+
     <target name="pmd-init" depends="mvn-init" xmlns:artifact="urn:maven-artifact-ant">
         <artifact:dependencies pathId="pmd.classpath">
-            <dependency groupId="pmd" artifactId="pmd" version="4.1.1"/>                 
-        </artifact:dependencies>        
-    </target>      
-    
+            <dependency groupId="pmd" artifactId="pmd" version="4.1.1"/>
+        </artifact:dependencies>
+    </target>
+
     <target name="pmd" depends="pmd-init">
         <mkdir dir="target/reports"/>
         <java classname="net.sourceforge.pmd.PMD" fork="true" output="target/reports/pmd.xml">
@@ -400,16 +400,16 @@
             <jvmarg value="-Xmx512m"/>
             <arg value="src/main/java"/>
             <arg value="xml"/>
-            <arg value="basic,imports,unusedcode"/>            
+            <arg value="basic,imports,unusedcode"/>
         </java>
     </target>
-    
+
     <target name="pmd-console-dump">
-        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">            
+        <java classname="bsh.Interpreter" fork="true" classpathref="test.classpath">
             <arg line="etc/pmd-console-dump.bsh"/>
         </java>
     </target>
-    
+
     <target name="pmd-cpd" depends="pmd-init">
         <mkdir dir="target/reports"/>
         <java classname="net.sourceforge.pmd.cpd.CPD" fork="true">
@@ -419,31 +419,31 @@
             </classpath>
             <jvmarg value="-Xmx512m"/>
             <arg line="--minimum-tokens 100"/>
-            <arg line="--files src/main/java"/>                       
+            <arg line="--files src/main/java"/>
         </java>
-    </target>    
-    
-    <!-- =========================== DOC ============================ -->    
-    
+    </target>
+
+    <!-- =========================== DOC ============================ -->
+
     <target name="javadoc">
         <mkdir dir="target/api"/>
         <javadoc destdir="target/api" windowtitle="JTrac" use="true" defaultexcludes="true" breakiterator="true">
-            <packageset dir="src/main/java"/>           
+            <packageset dir="src/main/java"/>
             <doctitle><![CDATA[<h1>JTrac API Documentation</h1>]]></doctitle>
             <bottom><![CDATA[<i>JTrac</i> - <a href="http://jtrac.info">http://jtrac.info</a>]]></bottom>
         </javadoc>
-    </target>   
-    
-    <!-- ========================= JETTY ============================ -->    
-    
+    </target>
+
+    <!-- ========================= JETTY ============================ -->
+
     <target name="confirm">
         <input message="Are you sure?" validargs="y,n" addproperty="input"/>
         <condition property="abort">
             <equals arg1="n" arg2="${input}"/>
         </condition>
-        <fail if="abort">User aborted.</fail>       
+        <fail if="abort">User aborted.</fail>
     </target>
-    
+
     <target name="jetty-setup" depends="war-exploded" xmlns:artifact="urn:maven-artifact-ant">
         <artifact:dependencies filesetId="jetty-fileset">
             <dependency groupId="org.mortbay.jetty" artifactId="jetty" version="6.1.1"/>
@@ -468,30 +468,30 @@
          <mkdir dir="target/jetty/logs"/>
          <mkdir dir="target/jetty/work"/>
          <antcall target="jetty-setup-dev"/>
-    </target>	
-   
+    </target>
+
     <target name="jetty-setup-dev" unless="production.mode">
         <echo>*** making jetty / webapp changes for development mode...</echo>
         <replaceregexp file="target/jetty/etc/webdefault.xml">
             <regexp pattern="(&lt;param-name&gt;useFileMappedBuffer&lt;/param-name&gt;\n.*&lt;param-value&gt;)true(&lt;/param-value&gt;)"/>
             <substitution expression="\1false\2"/>
-        </replaceregexp>        
-        <replace file="target/${war.name}/WEB-INF/web.xml" 
-            token="org.apache.wicket.protocol.http.WicketFilter" 
-            value="info.jtrac.wicket.devmode.ReloadingWicketFilter"/>        
-        <copy todir="target/${war.name}/WEB-INF" file="etc/log4j.properties" overwrite="true"/>            
+        </replaceregexp>
+        <replace file="target/${war.name}/WEB-INF/web.xml"
+            token="org.apache.wicket.protocol.http.WicketFilter"
+            value="info.jtrac.wicket.devmode.ReloadingWicketFilter"/>
+        <copy todir="target/${war.name}/WEB-INF" file="etc/log4j.properties" overwrite="true"/>
     </target>
-    
+
     <target name="jetty-status">
         <condition property="jetty.running">
             <socket server="localhost" port="8080"/>
-        </condition>        
+        </condition>
     </target>
-    
-    <target name="jetty-start" depends="jetty-setup">        
+
+    <target name="jetty-start" depends="jetty-setup">
         <jetty-start/>
-    </target>    
-   
+    </target>
+
     <target name="jetty-stop" depends="jetty-status" if="jetty.running">
         <java jar="target/jetty/start.jar" fork="true" dir="target/jetty">
             <jvmarg value="-DSTOP.PORT=8079"/>
@@ -499,24 +499,24 @@
             <arg value="--stop"/>
         </java>
         <sleep seconds="2"/>
-    </target>    
-    
+    </target>
+
     <target name="jetty-start-debug" depends="jetty-setup">
         <jetty-start arg1="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" arg2="-Xdebug"/>
-    </target>   
-       
-    <target name="jetty-set-production-mode">        
+    </target>
+
+    <target name="jetty-set-production-mode">
         <property name="production.mode" value="true"/>
     </target>
-    
+
     <target name="jetty-start-production-mode" depends="jetty-set-production-mode, jetty-setup">
         <jetty-start arg1="-Xmx512m" wicketConfig=""/>
     </target>
-    
+
     <macrodef name="jetty-start">
         <attribute name="webapp" default="../${war.name}"/>
-        <attribute name="arg1" default=""/>
-        <attribute name="arg2" default=""/>
+        <attribute name="arg1" default="-Darg1"/>
+        <attribute name="arg2" default="-Darg2"/>
         <attribute name="wicketConfig" default="-Dwicket.configuration=DEVELOPMENT"/>
         <sequential>
             <antcall target="jetty-stop"/>
@@ -529,70 +529,70 @@
                 <jvmarg value="-DSTOP.KEY=jtrac"/>
                 <jvmarg value="@{arg1}"/>
                 <jvmarg value="@{arg2}"/>
-            </java>            
-        </sequential>        
+            </java>
+        </sequential>
     </macrodef>
-    
+
     <!-- ========================= TOMCAT ============================ -->
-    
-    <target name="tomcat-clean">   
+
+    <target name="tomcat-clean">
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="${tomcat.home}/work/Catalina/localhost/${war.name}"/>
-            <fileset dir="${tomcat.home}/webapps/${war.name}"/>                            
-        </delete>     
+            <fileset dir="${tomcat.home}/webapps/${war.name}"/>
+        </delete>
     </target>
-    
+
     <target name="tomcat-clean-all">
         <input message="All tomcat webapps [${tomcat.home}/webapps] will be deleted.  Are you sure?"
             validargs="y,n" addproperty="do.clean"/>
         <condition property="do.abort">
             <equals arg1="n" arg2="${do.clean}"/>
         </condition>
-        <fail if="do.abort">aborted by user.</fail>        
+        <fail if="do.abort">aborted by user.</fail>
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="${tomcat.home}/work"/>
             <fileset dir="${tomcat.home}/webapps">
                 <exclude name="ROOT/**"/>
             </fileset>
-        </delete>   
+        </delete>
     </target>
-    
+
     <target name="tomcat-reload" depends="war-exploded-tomcat">
         <touch file="${tomcat.home}/webapps/${war.name}/WEB-INF/web.xml"/>
     </target>
-    
+
     <target name="tomcat-start-debug" depends="war-exploded-tomcat">
-        <java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">            
+        <java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
             <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
             <jvmarg value="-Dfile.encoding=UTF-8"/>
-            <jvmarg value="-Djtrac.home=${basedir}/home"/>           
+            <jvmarg value="-Djtrac.home=${basedir}/home"/>
         </java>
     </target>
-    
+
     <target name="tomcat-stop">
         <java jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
             <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
             <arg value="stop"/>
         </java>
-    </target>    
-    
-    <!-- ========================= SELENIUM ============================ -->
-    
-    <target name="selenium-start">
-        <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" classpathref="test.classpath"/>        
     </target>
-    
+
+    <!-- ========================= SELENIUM ============================ -->
+
+    <target name="selenium-start">
+        <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" classpathref="test.classpath"/>
+    </target>
+
     <target name="selenium-stop">
         <get src="http://localhost:4444/selenium-server/driver/?cmd=shutDown" dest="target/selenium.txt"/>
     </target>
-    
-    <!-- =========================== JMETER ============================= -->       
-    
+
+    <!-- =========================== JMETER ============================= -->
+
     <target name="jmeter-test">
-        <taskdef name="jmeter" classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask" 
-            classpath="${jmeter.home}/extras/ant-jmeter.jar"/>         
+        <taskdef name="jmeter" classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask"
+            classpath="${jmeter.home}/extras/ant-jmeter.jar"/>
         <delete failonerror="false">
             <fileset dir="target/reports" includes="*.jtl"/>
         </delete>
@@ -601,25 +601,25 @@
             <property name="jmeter.save.saveservice.output_format" value="xml"/>
         </jmeter>
         <xslt in="target/reports/jtrac-items.jtl" out="target/reports/jtrac-items.html"
-            style="${jmeter.home}/extras/jmeter-results-report_21.xsl"/>        
-    </target>  
-    
-    <!-- =========================== NETBEANS ============================= -->      
-    
+            style="${jmeter.home}/extras/jmeter-results-report_21.xsl"/>
+    </target>
+
+    <!-- =========================== NETBEANS ============================= -->
+
     <target if="netbeans.home" name="debug-nb">
-        <nbjpdaconnect address="8000" host="localhost" name="debug-nb" transport="dt_socket">          
+        <nbjpdaconnect address="8000" host="localhost" name="debug-nb" transport="dt_socket">
             <sourcepath>
-                <path path="src/main/java"/>                
+                <path path="src/main/java"/>
             </sourcepath>
-        </nbjpdaconnect>  
+        </nbjpdaconnect>
         <nbbrowse url="http://localhost:8080/jtrac"/>
     </target>
-    
+
     <!-- target for NetBeans Profiler on Windows -->
     <target name="jetty-start-profile" depends="jetty-set-production-mode, jetty-setup" if="netbeans.home">
         <property name="nbprof.home" value="${netbeans.home}/../profiler2/lib"/>
-        <property name="agent.path" value="${nbprof.home}/deployed/jdk15/windows/profilerinterface.dll=${nbprof.home},5140"/>        
+        <property name="agent.path" value="${nbprof.home}/deployed/jdk15/windows/profilerinterface.dll=${nbprof.home},5140"/>
         <jetty-start arg1="-agentpath:${agent.path}" arg2="-Xmx512m" wicketConfig=""/>
-    </target>         
-              
+    </target>
+
 </project>
