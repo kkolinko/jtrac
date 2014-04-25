@@ -122,7 +122,7 @@ public class UserAllocatePage extends BasePage {
             List<Long> allowedSpaces = new ArrayList<Long>();
             
             if(isPrincipalSuperUser) {
-                allowedSpaces = new ArrayList(spaceRolesMap.keySet());
+                allowedSpaces = new ArrayList<Long>(spaceRolesMap.keySet());
             } else {
                 // session user is not an admin, remove spaces that he should not see                
                 for(Space s : principal.getSpacesWhereRoleIsAdmin()) {
@@ -168,7 +168,7 @@ public class UserAllocatePage extends BasePage {
             
             if(!isPrincipalSuperUser) {
                 // not super user, show only spaces which can admin
-                Set<Space> set = new HashSet(spaces);                
+                Set<Space> set = new HashSet<Space>(spaces);                
                 List<Space> allowed = new ArrayList<Space>();
                 // also within these spaces may be fully allocated, so trim
                 for(Space s : principal.getSpacesWhereRoleIsAdmin()) {

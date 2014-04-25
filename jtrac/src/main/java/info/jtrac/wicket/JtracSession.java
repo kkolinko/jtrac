@@ -16,10 +16,11 @@
 
 package info.jtrac.wicket;
 
-import info.jtrac.Jtrac;
 import info.jtrac.domain.ItemSearch;
 import info.jtrac.domain.Space;
 import info.jtrac.domain.User;
+import info.jtrac.service.Jtrac;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

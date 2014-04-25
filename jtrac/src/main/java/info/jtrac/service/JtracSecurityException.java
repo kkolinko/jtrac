@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package info.jtrac.exception;
+package info.jtrac.service;
 
 /**
  * Custom exception to denote any security violation detected

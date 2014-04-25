@@ -5,6 +5,10 @@ target
 .classpath
 .project
 .settings
+*.launch
 
 # ant related
 home
+
+# project related
+logs

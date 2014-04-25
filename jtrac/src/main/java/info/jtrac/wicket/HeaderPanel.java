@@ -40,7 +40,7 @@ public class HeaderPanel extends BasePanel {
         
         final User user = getPrincipal();
         final Space space = getCurrentSpace();
-        final List<Space> spaces = new ArrayList(user.getSpaces());
+        final List<Space> spaces = new ArrayList<Space>(user.getSpaces());
         
         add(new Link("dashboard") {
             public void onClick() {

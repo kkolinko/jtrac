@@ -1,12 +1,12 @@
 /*
  * Copyright 2002-2005 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,8 @@ package info.jtrac.mail;
 import info.jtrac.domain.Item;
 import info.jtrac.domain.ItemUser;
 import info.jtrac.domain.User;
-import info.jtrac.util.ItemUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -102,9 +100,10 @@ public class MailSender {
 					} catch (Exception e) {
 						logger.error("send mail thread failed", e);
 						logger.error("mail headers dump start");
-						Enumeration headers = message.getAllHeaders();
+						@SuppressWarnings("unchecked")
+						Enumeration<Header> headers = message.getAllHeaders();
 						while (headers.hasMoreElements()) {
-							Header h = (Header) headers.nextElement();
+							Header h = headers.nextElement();
 							logger.info(h.getName() + ": " + h.getValue());
 						}
 						logger.error("mail headers dump end");
@@ -133,7 +132,7 @@ public class MailSender {
 		// ItemUtils adds the main inline CSS when generating the email content,
 		// so we gracefully degrade
 		sb
-				.append("<html><body><style type='text/css'>table.jtrac th, table.jtrac td { padding-left: 0.2em; padding-right: 0.2em; }</style>");
+		.append("<html><body><style type='text/css'>table.jtrac th, table.jtrac td { padding-left: 0.2em; padding-right: 0.2em; }</style>");
 		sb.append(html);
 		sb.append("</html>");
 		return sb.toString();
@@ -142,7 +141,7 @@ public class MailSender {
 	private String getItemViewAnchor(Item item, Locale locale) {
 		String itemUrl = url + "app/item/" + item.getRefId();
 		return "<p style='font-family: Arial; font-size: 75%'><a href='"
-				+ itemUrl + "'>" + itemUrl + "</a></p>";
+		+ itemUrl + "'>" + itemUrl + "</a></p>";
 	}
 
 	private String getSubject(Item item) {
@@ -168,7 +167,7 @@ public class MailSender {
 		StringBuffer sb = new StringBuffer();
 		String anchor = getItemViewAnchor(item, defaultLocale);
 		sb.append(anchor);
-		sb.append(ItemUtils.getAsHtml(item, messageSource, defaultLocale));
+		sb.append(item.getAsHtml(null, null, messageSource, defaultLocale));
 		sb.append(anchor);
 		if (logger.isDebugEnabled()) {
 			logger.debug("html content: " + sb);
@@ -206,7 +205,7 @@ public class MailSender {
 				// item will be set in setCC(). So we collect the cc items
 				// in the cclist and transform it to an stringarray.
 				if (cclist.size() > 0) {
-					String[] cc = cclist.toArray(new String[0]); 
+					String[] cc = cclist.toArray(new String[0]);
 					helper.setCc(cc);
 				}
 			}
@@ -226,7 +225,7 @@ public class MailSender {
 	public void sendUserPassword(User user, String clearText) {
 		if (sender == null) {
 			logger
-					.debug("mail sender is null, not sending new user / password change notification");
+			.debug("mail sender is null, not sending new user / password change notification");
 			return;
 		}
 		logger.debug("attempting to send mail for user password");
@@ -294,7 +293,7 @@ public class MailSender {
 		String host = config.get("mail.server.host");
 		if (host == null) {
 			logger
-					.warn("'mail.server.host' config is null, mail sender not initialized");
+			.warn("'mail.server.host' config is null, mail sender not initialized");
 			return;
 		}
 		String port = config.get("mail.server.port");

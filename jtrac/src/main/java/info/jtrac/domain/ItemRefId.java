@@ -16,7 +16,6 @@
 
 package info.jtrac.domain;
 
-import info.jtrac.exception.InvalidRefIdException;
 import java.io.Serializable;
 
 /**

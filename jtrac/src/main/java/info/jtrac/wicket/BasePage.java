@@ -16,15 +16,20 @@
 
 package info.jtrac.wicket;
 
-import info.jtrac.Jtrac;
 import info.jtrac.domain.ColumnHeading.Name;
 import info.jtrac.domain.Space;
+import info.jtrac.domain.UploadedFile;
 import info.jtrac.domain.User;
+import info.jtrac.service.Jtrac;
+
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.StringResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +80,14 @@ public abstract class BasePage extends WebPage {
         return m.getString();
     } 
             
-    public BasePage() {        
+    public static UploadedFile getUploadedFile(FileUploadField fileUploadField) throws IOException {
+			if (fileUploadField == null)
+				return null;
+			FileUpload fileUpload = fileUploadField.getFileUpload();
+			return fileUpload == null ? null :  new UploadedFile(fileUpload.getClientFileName(), fileUpload.getInputStream());
+		}
+
+		public BasePage() {        
         add(new IndividualHeadPanel().setRenderBodyOnly(true));
         add(new HeaderPanel().setRenderBodyOnly(true));
         String jtracVersion = getJtrac().getReleaseVersion();

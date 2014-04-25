@@ -27,11 +27,12 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>/WEB-INF/log4j.properties</param-value>
     </context-param>   
-    
+<!-- 
     <filter>
         <filter-name>openSessionInView</filter-name>
         <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
     </filter>
+ -->    
 
     <filter>
         <filter-name>jtrac-app</filter-name>
@@ -46,11 +47,12 @@
         </init-param>
     </filter>        
     
-    <!-- open session should be above the wicket filter -->
+    <!-- open session should be above the wicket filter 
     <filter-mapping>
         <filter-name>openSessionInView</filter-name>
         <url-pattern>/app/*</url-pattern>
     </filter-mapping>     
+    -->
     
     <filter-mapping>
         <filter-name>jtrac-app</filter-name>

@@ -18,6 +18,7 @@ package info.jtrac.wicket;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Check;
 import org.apache.wicket.markup.html.form.CheckGroup;
@@ -28,30 +29,35 @@ import org.apache.wicket.model.PropertyModel;
 /**
  * reused in space allocate and user allocate admin screens
  */
-public class RoleAllocatePanel extends BasePanel {  
-    
-    private List<String> choices;
-    private List<String> selected = new ArrayList<String>();
+public class RoleAllocatePanel extends BasePanel {
 
-    public void setChoices(List<String> choices) {
-        this.choices = choices;
-    }    
-    
-    public List<String> getSelected() {
-        return selected;
-    }        
-    
-    public RoleAllocatePanel(String id) {
-        super(id);                       
-        CheckGroup checkGroup = new CheckGroup("checkGroup", new PropertyModel(this, "selected"));
-        add(checkGroup);
-        checkGroup.add(new ListView("roleKeys", new PropertyModel(this, "choices")) {            
-            protected void populateItem(ListItem listItem) {
-                String roleKey = (String) listItem.getModelObject();
-                listItem.add(new Check("checkBox", listItem.getModel()));
-                listItem.add(new Label("roleKey", roleKey));
-            }
-        });
-    }
+	private List<String> choices;
+	private List<String> selected = new ArrayList<String>();
+
+	public void setChoices(List<String> choices) {
+		this.choices = choices;
+	}
+
+	public List<String> getChoices() {
+		return choices;
+	}
+
+	public List<String> getSelected() {
+		return selected;
+	}
+
+	public RoleAllocatePanel(String id) {
+		super(id);
+		CheckGroup checkGroup = new CheckGroup("checkGroup", new PropertyModel(this, "selected"));
+		add(checkGroup);
+		checkGroup.add(new ListView("roleKeys", new PropertyModel(this, "choices")) {
+			@Override
+			protected void populateItem(ListItem listItem) {
+				String roleKey = (String) listItem.getModelObject();
+				listItem.add(new Check("checkBox", listItem.getModel()));
+				listItem.add(new Label("roleKey", roleKey));
+			}
+		});
+	}
 
 }

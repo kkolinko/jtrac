@@ -120,7 +120,7 @@ public class SpaceAllocatePage extends BasePage {
             
             final SimpleAttributeModifier sam = new SimpleAttributeModifier("class", "alt");
             
-            add(new ListView("usrs", new ArrayList(userRolesMap.keySet())) {
+            add(new ListView("usrs", new ArrayList<Long>(userRolesMap.keySet())) {
                 protected void populateItem(ListItem listItem) {
                     long userId = (Long) listItem.getModelObject();
                     final User user = userRolesMap.get(userId).get(0).getUser();

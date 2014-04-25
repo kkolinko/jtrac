@@ -1,26 +1,26 @@
 package info.jtrac.svn;
 
-import java.util.Collection;
-import java.util.Iterator;
-import junit.framework.TestCase;
-import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
-import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
-import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
-import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
-public class SvnTest extends TestCase {
-    
-    public void testNothing() {
-        
-    }
-    
-    /*
+import org.junit.Test;
+//import org.tmatesoft.svn.core.SVNDirEntry;
+//import org.tmatesoft.svn.core.SVNException;
+//import org.tmatesoft.svn.core.SVNNodeKind;
+//import org.tmatesoft.svn.core.SVNURL;
+//import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+//import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
+//import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
+//import org.tmatesoft.svn.core.io.SVNRepository;
+//import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+//import org.tmatesoft.svn.core.wc.SVNWCUtil;
+
+public class SvnTest {
+
+	@Test
+	public void testNothing() {
+
+	}
+
+	/*
     public void testSvn() throws Exception {
         String url = "https://adms.satyam.com/svn/jtrac/trunk/jtrac";
         String name = "pt34469";
@@ -40,14 +40,14 @@ public class SvnTest extends TestCase {
         }
         System.out.println("Repository Root: " + repository.getRepositoryRoot(true));
         System.out.println("Repository UUID: " + repository.getRepositoryUUID());
-        listEntries(repository, "");        
+        listEntries(repository, "");
         long latestRevision = repository.getLatestRevision();
         System.out.println("Repository latest revision: " + latestRevision);
         System.exit(0);
     }
-    
+
     private static void listEntries(SVNRepository repository, String path) throws SVNException {
-        
+
         Collection entries = repository.getDir(path, -1, null, (Collection) null);
         Iterator iterator = entries.iterator();
         while (iterator.hasNext()) {
@@ -61,6 +61,6 @@ public class SvnTest extends TestCase {
             }
         }
     }
-     */
-    
+	 */
+
 }

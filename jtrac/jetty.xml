@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+	<Call class="java.lang.System" name="setProperty">
+		<Arg>jtrac.home</Arg>
+		<Arg>target/home</Arg>
+	</Call>
+<!--
+	<Call class="java.lang.System" name="setProperty">
+		<Arg>jtrac.loggerSettings</Arg>
+		<Arg>conf/logger_linux.ini</Arg>
+	</Call>
+ -->
+</Configure>

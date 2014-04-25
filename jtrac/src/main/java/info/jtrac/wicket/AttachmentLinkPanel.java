@@ -17,12 +17,13 @@
 package info.jtrac.wicket;
 
 import info.jtrac.domain.Attachment;
-import info.jtrac.util.AttachmentUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,56 +35,59 @@ import org.apache.wicket.util.io.Streams;
  * link for downloading an attachment
  */
 public class AttachmentLinkPanel extends BasePanel {
-    
-    public AttachmentLinkPanel(String id, final Attachment attachment) {
-        
-        super(id);
-        
-        if(attachment == null) {
-            add(new Label("attachment", ""));
-            setVisible(false);
-            return;
-        }
-        
-        final String fileName = getResponse().encodeURL(attachment.getFileName()).toString();
-        
-        Link link = new Link("attachment") {
-            // adapted from wicket.markup.html.link.DownloadLink
-            // with the difference that the File is instantiated only after onClick
-            public void onClick() {
-                getRequestCycle().setRequestTarget(new IRequestTarget() {
-                    
-                    public void detach(RequestCycle requestCycle) {
-                    }
-                    
-                    public void respond(RequestCycle requestCycle) {
-                        WebResponse r = (WebResponse) requestCycle.getResponse();
-                        r.setAttachmentHeader(fileName);
-                        try {
-                            File file = AttachmentUtils.getFile(attachment, getJtrac().getJtracHome());
-                            InputStream is = new FileInputStream(file);
-                            try {
-                                Streams.copy(is, r.getOutputStream());
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            } finally {
-                                try {
-                                    is.close();
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-            }
-        };
-        
-        link.add(new Label("fileName", fileName));
-        add(link);
-        
-    }
-    
+
+	public AttachmentLinkPanel(String id, final Attachment attachment) {
+
+		super(id);
+
+		if(attachment == null) {
+			add(new Label("attachment", ""));
+			setVisible(false);
+			return;
+		}
+
+		final String fileName = getResponse().encodeURL(attachment.getFileName()).toString();
+
+		Link link = new Link("attachment") {
+			// adapted from wicket.markup.html.link.DownloadLink
+			// with the difference that the File is instantiated only after onClick
+			@Override
+			public void onClick() {
+				getRequestCycle().setRequestTarget(new IRequestTarget() {
+
+					@Override
+					public void detach(RequestCycle requestCycle) {
+					}
+
+					@Override
+					public void respond(RequestCycle requestCycle) {
+						WebResponse r = (WebResponse) requestCycle.getResponse();
+						r.setAttachmentHeader(fileName);
+						try {
+							File file = attachment.getFile(getJtrac().getJtracHome());
+							InputStream is = new FileInputStream(file);
+							try {
+								Streams.copy(is, r.getOutputStream());
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							} finally {
+								try {
+									is.close();
+								} catch (IOException e) {
+									throw new RuntimeException(e);
+								}
+							}
+						} catch (FileNotFoundException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				});
+			}
+		};
+
+		link.add(new Label("fileName", fileName));
+		add(link);
+
+	}
+
 }

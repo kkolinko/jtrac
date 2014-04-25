@@ -16,7 +16,8 @@
 
 package info.jtrac.web;
 
-import info.jtrac.Jtrac;
+import info.jtrac.service.Jtrac;
+
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**

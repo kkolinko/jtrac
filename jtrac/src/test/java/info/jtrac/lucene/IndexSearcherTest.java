@@ -37,7 +37,7 @@ public class IndexSearcherTest extends TestCase {
         Indexer indexer = (Indexer) context.getBean("indexer");
         indexer.index(item);
         IndexSearcher searcher = (IndexSearcher) context.getBean("indexSearcher");
-        List list = searcher.findItemIdsContainingText("lazy");
+        List<?> list = searcher.findItemIdsContainingText("lazy");
         assertEquals(1, list.size());
         list = searcher.findItemIdsContainingText("foo");
         assertEquals(0, list.size());
@@ -49,11 +49,11 @@ public class IndexSearcherTest extends TestCase {
         Item item = new Item();
         item.setId(1);
         item.setSummary("this does not contain an umlaut");
-        item.setDetail("there is an umlaut right here --> ümlaut");
+        item.setDetail("there is an umlaut right here --> ï¿½mlaut");
         Indexer indexer = (Indexer) context.getBean("indexer");
         indexer.index(item);        
         IndexSearcher searcher = (IndexSearcher) context.getBean("indexSearcher");
-        List list = searcher.findItemIdsContainingText("ümlaut");
+        List<?> list = searcher.findItemIdsContainingText("ï¿½mlaut");
         assertEquals(1, list.size());
     }
     

@@ -16,8 +16,9 @@
 
 package info.jtrac.wicket;
 
-import info.jtrac.Jtrac;
 import info.jtrac.domain.BatchInfo;
+import info.jtrac.service.Jtrac;
+
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;

@@ -2,7 +2,7 @@ YAHOO.widget.ResizeDialog = function(el, userConfig) {
     if (arguments.length > 0) {
         YAHOO.widget.ResizeDialog.superclass.constructor.call(this, el, userConfig);
     }
-}
+};
 
 YAHOO.extend(YAHOO.widget.ResizeDialog, YAHOO.widget.Panel);
 
@@ -31,7 +31,7 @@ YAHOO.widget.ResizeDialog.prototype.init = function(el, userConfig) {
 
         /*
              Set the CSS "overflow" property to "hidden" before
-             hiding the panel to prevent the scrollbars from 
+             hiding the panel to prevent the scrollbars from
              bleeding through on Firefox for OS X.
         */
 
@@ -79,7 +79,7 @@ YAHOO.widget.ResizeDialog.prototype.init = function(el, userConfig) {
 
             me.innerElement.style.overflow = "hidden";
             me.body.style.overflow = "auto";
-        }
+        };
 
         this.ddResize.onDrag = function(e) {
             var newPos = [YAHOO.util.Event.getPageX(e),
@@ -111,7 +111,7 @@ YAHOO.widget.ResizeDialog.prototype.init = function(el, userConfig) {
             if (innerWidth < 20) {
                 me.innerElement.style.width = "20px";
             }
-        }
+        };
 
     }, this, true);
 
@@ -125,4 +125,3 @@ YAHOO.widget.ResizeDialog.prototype.init = function(el, userConfig) {
 YAHOO.widget.ResizeDialog.prototype.toString = function() {
     return "ResizePanel " + this.id;
 };
-                

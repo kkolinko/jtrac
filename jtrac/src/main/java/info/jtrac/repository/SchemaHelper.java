@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package info.jtrac.hibernate;
+package info.jtrac.repository;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;

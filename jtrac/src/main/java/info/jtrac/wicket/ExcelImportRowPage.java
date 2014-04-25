@@ -19,6 +19,8 @@ package info.jtrac.wicket;
 import info.jtrac.domain.ExcelFile;
 import info.jtrac.domain.ExcelFile.Cell;
 import info.jtrac.domain.ExcelFile.Column;
+import info.jtrac.wicket.behavior.ErrorHighlighter;
+
 import java.util.Date;
 import java.util.List;
 import org.apache.wicket.behavior.SimpleAttributeModifier;

@@ -40,7 +40,7 @@ public abstract class ReadOnlyRefreshingView<T> extends RefreshingView {
     public abstract List<T> getObjectList();
 
     @Override
-    protected Iterator getItemModels() {
+    protected Iterator<IModel> getItemModels() {
         List<T> list = getObjectList();
         List<IModel> models = new ArrayList<IModel>(list.size());
         for (final T o : list) {

@@ -33,20 +33,20 @@ public class JtracCheckBoxMultipleChoice extends ListMultipleChoice {
     
     private boolean isForSet;
     
-    public JtracCheckBoxMultipleChoice(String id, List choices, IChoiceRenderer renderer) {
+    public JtracCheckBoxMultipleChoice(String id, List<?> choices, IChoiceRenderer renderer) {
         super(id, choices, renderer);
     }
     
-    public JtracCheckBoxMultipleChoice(String id, List choices, IChoiceRenderer renderer, boolean isForSet) {
+    public JtracCheckBoxMultipleChoice(String id, List<?> choices, IChoiceRenderer renderer, boolean isForSet) {
         super(id, choices, renderer);
         this.isForSet = isForSet;
     }
     
     @Override
     protected java.lang.Object convertValue(String[] ids) {
-        List list = (List) super.convertValue(ids);
+        List<?> list = (List<?>) super.convertValue(ids);
         if(isForSet) {
-            return new HashSet(list);
+            return new HashSet<Object>(list);
         } else {
             return list;
         }
@@ -59,7 +59,7 @@ public class JtracCheckBoxMultipleChoice extends ListMultipleChoice {
     @Override
     protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
         
-        final List choices = getChoices();
+        final List<?> choices = getChoices();
         boolean scrollable = choices.size() > 6;
         
         final StringBuilder buffer = new StringBuilder();

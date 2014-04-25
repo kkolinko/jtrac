@@ -16,9 +16,10 @@
 
 package info.jtrac.wicket;
 
-import info.jtrac.Jtrac;
 import info.jtrac.domain.Space;
 import info.jtrac.domain.User;
+import info.jtrac.service.Jtrac;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
 import org.slf4j.Logger;

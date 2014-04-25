@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package info.jtrac.exception;
+package info.jtrac.domain;
 
 /**
- * Custom exception to handle invalid full text search queries
+ * Custom exception to denote an invalid Item refId
  */
-public class SearchQueryParseException extends RuntimeException {
+public class InvalidRefIdException extends RuntimeException {
     
-    public SearchQueryParseException(String message, Throwable cause) {
-        super(message, cause);
+    public InvalidRefIdException(String message) {
+        super(message);
     }
 
 }

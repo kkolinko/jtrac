@@ -29,7 +29,7 @@ public class IndicatingDropDownChoice extends DropDownChoice implements IAjaxInd
     
     private final WicketAjaxIndicatorAppender indicatorAppender = new WicketAjaxIndicatorAppender();
     
-    public IndicatingDropDownChoice(String id, List list, IChoiceRenderer cr){
+    public IndicatingDropDownChoice(String id, List<?> list, IChoiceRenderer cr){
         super(id, list, cr);
         add(indicatorAppender);
     }
