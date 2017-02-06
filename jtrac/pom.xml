@@ -39,7 +39,7 @@
 
 		<version.jaxen>1.1.6</version.jaxen>
 		<version.junit>4.11</version.junit>
-		<version.org.springframework>3.2.8.RELEASE</version.org.springframework>
+		<version.org.springframework>3.2.18.RELEASE</version.org.springframework>
 		<version.org.hibernate>4.3.5.Final</version.org.hibernate>
 		<version.org.hsqldb>2.3.2</version.org.hsqldb>
 	</properties>
