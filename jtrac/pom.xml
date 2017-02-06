@@ -41,7 +41,7 @@
 		<version.junit>4.11</version.junit>
 		<version.org.springframework>3.2.18.RELEASE</version.org.springframework>
 		<version.org.hibernate>4.3.5.Final</version.org.hibernate>
-		<version.org.hsqldb>2.3.2</version.org.hsqldb>
+		<version.org.hsqldb>2.3.4</version.org.hsqldb>
 	</properties>
 	<!--
 		<distributionManagement>
